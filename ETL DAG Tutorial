@@ -1,0 +1,70 @@
+"""
+ETL DAG Tutorial for Apache Airflow
+
+Description:
+-------------
+This DAG demonstrates a simple ETL workflow with three tasks:
+1. extract  - simulates data extraction
+2. transform - simulates data transformation
+3. load     - simulates data loading
+
+Instructions:
+-------------
+1. Open your Airflow DAGs folder in terminal:
+    cd ~/airflow/dags
+
+2. Create a new DAG file using nano (or edit existing):
+    nano etl_dag.py
+
+3. Copy and paste the contents of this file into nano.
+
+4. Save the file (Ctrl+O) and exit (Ctrl+X).
+
+5. Start Airflow webserver and scheduler to view DAG in UI:
+    airflow webserver --port 8080
+    airflow scheduler
+
+"""
+
+from datetime import datetime
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+
+# ETL functions
+def extract():
+    print("Extracting data...")
+
+def transform():
+    print("Transforming data...")
+
+def load():
+    print("Loading data...")
+
+# Define DAG
+with DAG(
+    'etl_dag',
+    start_date=datetime(2025, 11, 7),
+    schedule_interval='@daily',
+    catchup=False,
+    description='A simple ETL DAG with dependencies'
+) as dag:
+
+    # Define tasks
+    extract_task = PythonOperator(
+        task_id='extract',
+        python_callable=extract
+    )
+
+    transform_task = PythonOperator(
+        task_id='transform',
+        python_callable=transform
+    )
+
+    load_task = PythonOperator(
+        task_id='load',
+        python_callable=load
+    )
+
+    # Define task dependencies (graph)
+    extract_task >> transform_task >> load_task
+  
